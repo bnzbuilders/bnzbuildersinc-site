@@ -30,7 +30,7 @@
  *   false → normal indexing; robots.txt allows crawling + lists the sitemap.
  * TODO(Bilal): flip to false only at launch, after content approval.
  */
-export const PREVIEW_NOINDEX = true;
+export const PREVIEW_NOINDEX = false;
 
 /**
  * Quote-form backend (the ONE form value).

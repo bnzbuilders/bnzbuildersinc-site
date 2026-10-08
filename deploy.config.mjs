@@ -18,7 +18,7 @@
 
 export const PROD_ORIGIN = 'https://bnzbuilders.com';
 
-export const TARGET = process.env.DEPLOY_TARGET || 'github-pages';
+export const TARGET = process.env.DEPLOY_TARGET || 'custom-domain';
 
 const bases = {
   'github-pages': '/bnzbuildersinc-site/',
