@@ -1,20 +1,24 @@
 ---
 import { u } from '../lib/paths';
 import Base from '../layouts/Base.astro';
-import HeroGraphic from '../components/HeroGraphic.astro';
+import { Picture } from 'astro:assets';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { business, seo, services, publicProjects, agenciesPursued, deliveryApproach, HERO_PHOTO, HERO_PHOTO_ALT } from '../data/site';
+import { heroStock, serviceStock, STOCK_NOTE } from '../data/stock';
 const [core, ...rest] = services;
 const featured = publicProjects.filter((p) => p.featured);
 ---
 <Base title={seo.home.title} description={seo.home.description} localBusinessSchema>
   <section class="hero" aria-labelledby="hero-h">
-    <div class="hero-bg" aria-hidden={HERO_PHOTO ? undefined : 'true'}>
+    <div class:list={['hero-bg', { 'hero-bg--stock': !HERO_PHOTO }]}>
       {HERO_PHOTO
         ? <img class="hero-photo" src={u(HERO_PHOTO)} alt={HERO_PHOTO_ALT} fetchpriority="high" />
-        : <div class="hero-art"><HeroGraphic /></div>}
+        : <>
+            <Picture class="hero-photo" src={heroStock.src} alt={heroStock.alt} formats={['avif', 'webp']} widths={[640, 960, 1280, 1600, 2000]} sizes="(min-width: 1080px) 54vw, 100vw" loading="eager" fetchpriority="high" decoding="async" style={heroStock.position ? `object-position:${heroStock.position}` : undefined} />
+            <span class="stock-note stock-note--hero">Representative image</span>
+          </>}
     </div>
     <div class="wrap hero-inner">
       <div class="hero-copy">
@@ -48,7 +52,12 @@ const featured = publicProjects.filter((p) => p.featured);
         <a class="text-link" href={u('/services/')}>All services <span aria-hidden="true">→</span></a>
       </div>
 
-      <a class="svc-feature reveal" href={u(`/services/#${core.slug}`)}>
+      <a class:list={['svc-feature reveal', { 'svc-feature--photo': serviceStock[core.slug] }]} href={u(`/services/#${core.slug}`)}>
+        {serviceStock[core.slug] && (
+          <div class="svc-media svc-media--feature">
+            <Picture src={serviceStock[core.slug].src} alt={serviceStock[core.slug].alt} formats={['avif', 'webp']} widths={[400, 640, 960]} sizes="(min-width: 1020px) 380px, (min-width: 640px) 90vw, 100vw" loading="lazy" decoding="async" style={serviceStock[core.slug].position ? `object-position:${serviceStock[core.slug].position}` : undefined} />
+          </div>
+        )}
         <div class="svc-feature-main">
           <span class="tag">Core trade</span>
           <ServiceIcon name={core.icon} size={40} />
@@ -63,7 +72,12 @@ const featured = publicProjects.filter((p) => p.featured);
 
       <div class="svc-grid">
         {rest.map((s, i) => (
-          <a class="svc-card reveal" href={u(`/services/#${s.slug}`)} style={`--i:${i}`}>
+          <a class:list={['svc-card reveal', { 'svc-card--photo': serviceStock[s.slug] }]} href={u(`/services/#${s.slug}`)} style={`--i:${i}`}>
+            {serviceStock[s.slug] && (
+              <div class="svc-media">
+                <Picture src={serviceStock[s.slug].src} alt={serviceStock[s.slug].alt} formats={['avif', 'webp']} widths={[400, 640, 960]} sizes="(min-width: 1020px) 400px, (min-width: 640px) 50vw, 100vw" loading="lazy" decoding="async" style={serviceStock[s.slug].position ? `object-position:${serviceStock[s.slug].position}` : undefined} />
+              </div>
+            )}
             <span class="svc-num">{String(i + 2).padStart(2, '0')}</span>
             <ServiceIcon name={s.icon} />
             <h3>{s.title}</h3>
@@ -72,6 +86,7 @@ const featured = publicProjects.filter((p) => p.featured);
           </a>
         ))}
       </div>
+      <p class="fine stock-fine">{STOCK_NOTE}: general stock photos of the trades, not BNZ projects.</p>
     </div>
   </section>
 

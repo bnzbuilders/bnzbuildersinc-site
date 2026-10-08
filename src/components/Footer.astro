@@ -1,6 +1,7 @@
 ---
 import { u } from '../lib/paths';
 import { footerNav, business, officeLine, services } from '../data/site';
+import { STOCK_CREDIT_LINE } from '../data/stock';
 import Brand from './Brand.astro';
 const year = new Date().getFullYear();
 ---
@@ -42,6 +43,7 @@ const year = new Date().getFullYear();
     <div class="footer-bottom">
       <span>© {year} {business.legalName} · Cedarhurst, New York</span>
       <span>Commercial general contractor · New York State · <a href={u('/privacy/')}>Privacy</a></span>
+      <span class="footer-credit">{STOCK_CREDIT_LINE}</span>
     </div>
   </div>
 </footer>

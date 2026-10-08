@@ -245,6 +245,20 @@ p { margin: 0 0 1em; }
   .hero-graphic .hg-draw { stroke-dasharray: 1600; stroke-dashoffset: 1600; animation: draw 2.4s var(--ease) .3s forwards; }
   .hero-graphic .hg-hook { animation: sway 6s ease-in-out infinite alternate; transform-origin: 392px 88px; }
 }
+/* Representative stock hero (only when no owner-approved HERO_PHOTO is set). Split layout on desktop. */
+.hero-bg picture { display: block; width: 100%; height: 100%; }
+.hero-bg.hero-bg--stock:has(.hero-photo)::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(24, 48, 42,.6) 0%, rgba(24, 48, 42,.06) 22%, rgba(24, 48, 42,.04) 100%); }
+.stock-note { font-size: 0.68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.stock-note--hero { position: absolute; z-index: 1; right: 12px; bottom: 12px; padding: 4px 8px; background: rgba(24, 48, 42,.8); color: rgba(251, 248, 242,.92); }
+@media (min-width: 1080px) {
+  .hero-bg--stock { left: 46%; }
+  .hero-bg.hero-bg--stock:has(.hero-photo)::after {
+    background:
+      linear-gradient(0deg, rgba(24, 48, 42,.96) 0, rgba(24, 48, 42,.88) 130px, rgba(24, 48, 42,0) 300px),
+      linear-gradient(90deg, rgba(24, 48, 42,1) 0%, rgba(24, 48, 42,.82) 14%, rgba(24, 48, 42,.35) 45%, rgba(24, 48, 42,.2) 100%);
+  }
+  .stock-note--hero { top: 16px; bottom: auto; right: 16px; }
+}
 @keyframes rise { to { opacity: 1; transform: none; } }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes sway { from { transform: rotate(-1.2deg); } to { transform: rotate(1.2deg); } }
@@ -291,6 +305,25 @@ p { margin: 0 0 1em; }
 .svc-card::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 100%; background: var(--tan); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
 .svc-card:hover::before { transform: scaleX(1); }
 
+/* Representative stock photos on service cards (4:3, square corners like the rest of the site) */
+.svc-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--paper-3); }
+.svc-media picture { display: block; width: 100%; height: 100%; }
+.svc-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+.svc-card--photo { padding-top: 0; }
+.svc-card--photo .svc-media { margin: 0 -28px 26px; }
+.svc-card--photo .svc-num { top: 14px; right: 14px; z-index: 1; padding: 3px 8px; background: var(--ink); color: var(--white); }
+.svc-card--photo:hover .svc-media img, .svc-feature--photo:hover .svc-media img { transform: scale(1.03); }
+.svc-media--feature { position: relative; z-index: 1; align-self: center; background: var(--char); }
+@media (min-width: 700px) {
+  .svc-feature--photo { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 40px; }
+  .svc-feature--photo .svc-feature-list { grid-column: 1 / -1; grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1080px) {
+  .svc-feature--photo { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, .78fr); gap: 48px; }
+  .svc-feature--photo .svc-feature-list { grid-column: auto; grid-template-columns: 1fr; }
+}
+.stock-fine { margin: 14px 0 0; font-size: 0.78rem; }
+
 /* ---------- Services page ---------- */
 .svc-section { padding: clamp(64px, 8vw, 112px) 0; border-bottom: 1px solid var(--line); }
 .svc-section--alt { background: var(--paper-2); }
@@ -312,6 +345,16 @@ p { margin: 0 0 1em; }
 .svc-section--core .svc-visual-num { color: rgba(24, 48, 42,.16); }
 .svc-section-copy h2 { margin-bottom: 18px; }
 .svc-section-copy .lead { margin-bottom: 28px; }
+
+/* Services page: representative stock photo in the 4:3 visual */
+.svc-section-visual--photo { margin: 0; }
+.svc-visual--photo picture { position: absolute; inset: 0; z-index: -2; }
+.svc-visual--photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.svc-visual--photo::before { z-index: -1; background-image: linear-gradient(200deg, rgba(24, 48, 42,.55) 0%, rgba(24, 48, 42,0) 38%); background-size: auto; }
+.svc-section--core .svc-visual--photo::before { background-image: linear-gradient(200deg, rgba(24, 48, 42,.55) 0%, rgba(24, 48, 42,0) 38%); }
+.svc-visual--photo .svc-visual-num, .svc-section--core .svc-visual--photo .svc-visual-num { color: rgba(251, 248, 242,.9); font-size: clamp(2.2rem, 4vw, 3.2rem); }
+.svc-section--core .svc-visual--photo::after { border-color: var(--tan); }
+.stock-cap { margin-top: 10px; font-size: 0.72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 
 /* ---------- Cards ---------- */
 .card { background: var(--white); border: 1px solid var(--line); padding: 32px 28px; position: relative; border-top: 3px solid var(--ink); }
@@ -533,6 +576,7 @@ p { margin: 0 0 1em; }
 .footer-list a:hover { color: var(--tan); }
 .site-footer address { font-style: normal; }
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line-dark); font-size: 0.82rem; }
+.footer-credit { flex-basis: 100%; font-size: 0.78rem; opacity: .85; }
 
 /* ---------- Careers panels ---------- */
 .panel { background: var(--white); border: 1px solid var(--line); border-top: 4px solid var(--tan); padding: clamp(28px, 4vw, 52px); }

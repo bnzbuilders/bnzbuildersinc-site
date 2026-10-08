@@ -5,6 +5,8 @@ import PageHero from '../components/PageHero.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { seo, services } from '../data/site';
+import { Picture } from 'astro:assets';
+import { serviceStock } from '../data/stock';
 ---
 <Base title={seo.services.title} description={seo.services.description}>
   <PageHero
@@ -21,12 +23,22 @@ import { seo, services } from '../data/site';
     {services.map((s, i) => (
       <section id={s.slug} class:list={['svc-section', { 'svc-section--core': s.core, 'svc-section--alt': i % 2 === 1 }]} aria-labelledby={`${s.slug}-h`}>
         <div class="wrap svc-section-grid">
-          <div class="svc-section-visual reveal" aria-hidden="true">
-            <div class="svc-visual">
-              <span class="svc-visual-num">{String(i + 1).padStart(2, '0')}</span>
-              <ServiceIcon name={s.icon} size={88} />
+          {serviceStock[s.slug] ? (
+            <figure class="svc-section-visual svc-section-visual--photo reveal">
+              <div class="svc-visual svc-visual--photo">
+                <Picture src={serviceStock[s.slug].src} alt={serviceStock[s.slug].alt} formats={['avif', 'webp']} widths={[480, 720, 960, 1280]} sizes="(min-width: 1280px) 520px, (min-width: 900px) 42vw, 100vw" loading="lazy" decoding="async" style={serviceStock[s.slug].position ? `object-position:${serviceStock[s.slug].position}` : undefined} />
+                <span class="svc-visual-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <figcaption class="stock-cap">Representative image</figcaption>
+            </figure>
+          ) : (
+            <div class="svc-section-visual reveal" aria-hidden="true">
+              <div class="svc-visual">
+                <span class="svc-visual-num">{String(i + 1).padStart(2, '0')}</span>
+                <ServiceIcon name={s.icon} size={88} />
+              </div>
             </div>
-          </div>
+          )}
           <div class="svc-section-copy reveal">
             {s.core && <span class="tag">Core trade</span>}
             <h2 id={`${s.slug}-h`}>{s.title}</h2>
