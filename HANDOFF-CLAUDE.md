@@ -178,3 +178,21 @@ with **ERR_SSL_VERSION_OR_CIPHER_MISMATCH** (reported; TLS handshake failure).
 9. Search Console + sitemap submission; update Google Business Profile website URL (with approval).
 
 Other hosts (Vercel/Netlify/Cloudflare Pages) also work: build `npm run build`, output `dist`, env `DEPLOY_TARGET=custom-domain`.
+
+## GoDaddy DNS change plan for bnzbuilders.com (verified Oct 8 2026, 3:07 PM ET, from Bilal's GoDaddy account #659914658; REQUIRES BILAL APPROVAL)
+
+Current zone has 17 records. Change ONLY these two:
+1. `A @ 160.153.0.116` -> edit to `185.199.108.153`; add `A @ 185.199.109.153`, `A @ 185.199.110.153`, `A @ 185.199.111.153` (optional AAAA: 2606:50c0:8000::153 .. 8003::153).
+2. `CNAME www -> bnzbuilders.com` -> edit to `bnzbuilders.github.io`.
+
+DO NOT TOUCH (Microsoft 365 email + GoDaddy plumbing):
+- MX @ bnzbuilders-com.mail.protection.outlook.com (0)
+- TXT @ NETORG18898397.onmicrosoft.com
+- TXT @ v=spf1 include:secureserver.net -all
+- TXT _dmarc v=DMARC1; p=reject; ...
+- CNAME autodiscover, email, msoid, lyncdiscover, sip
+- SRV _sip._tls, _sipfederationtls._tcp
+- NS (x2), SOA, _domainconnect
+
+Order: set custom domain `bnzbuilders.com` in GitHub Pages settings first -> change DNS -> wait for cert -> Enforce HTTPS -> verify https://bnzbuilders.com and https://www.bnzbuilders.com -> send a test email to/from @bnzbuilders.com to confirm mail unaffected.
+Note: DMARC p=reject + SPF secureserver-only. Any future form service sending as @bnzbuilders.com must be added to SPF first. Current form uses mailto, so no impact.
