@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { services, scopes, differentiators, business } from '../data/site';
+---
+<Base
+  title="Services | BNZ Builders Inc. — General Contracting, Painting, Drywall, Bathrooms"
+  description="General contracting, painting, drywall & interiors, bathroom renovation, public works interiors and commercial fit-out across New York. BNZ Builders Inc., Cedarhurst, NY."
+>
+  <PageHero eyebrow="Services" title="What we put under contract." lead="Interior renovation and finish trades for owners, tenants and public agencies. One contract, one project manager." />
+
+  <section class="section">
+    <div class="wrap">
+      <ol class="svc-detail">
+        {services.map((s, i) => (
+          <li id={s.slug}>
+            <span class="svc-num">{String(i + 1).padStart(2, '0')}</span>
+            <h2>{s.title}</h2>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--dark" aria-labelledby="scope-h">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Scope list</p>
+        <h2 id="scope-h">Scopes we take on.</h2>
+        <p class="lead">Interior and finish work is the core. If your scope is on this list, send it over.</p>
+      </div>
+      <ul class="chips">
+        {scopes.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="every-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">On every job</p>
+        <h2 id="every-h">What doesn't change.</h2>
+      </div>
+      <div class="grid grid--4">
+        {differentiators.map((d) => (
+          <div class="card--line card"><h3>{d.title}</h3><p class="muted">{d.text}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand heading="Have a scope? Get a number." />
+</Base>
+
+<style>
+  .svc-detail { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .svc-detail li { display: grid; grid-template-columns: 48px 1fr; gap: 4px 16px; padding: clamp(28px, 4vw, 44px) 0; border-bottom: 1px solid var(--line-strong); scroll-margin-top: 90px; }
+  .svc-detail h2 { font-size: clamp(2rem, 5vw, 3.4rem); margin: 0; }
+  .svc-detail p { grid-column: 2; margin: 8px 0 0; color: var(--muted); font-size: 1.1rem; max-width: 40em; }
+  @media (min-width: 900px) {
+    .svc-detail li { grid-template-columns: 80px 1.1fr 1fr; align-items: baseline; }
+    .svc-detail p { grid-column: 3; margin: 0; }
+  }
+</style>

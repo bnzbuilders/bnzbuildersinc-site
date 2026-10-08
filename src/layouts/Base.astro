@@ -1,0 +1,88 @@
+---
+import { u, abs } from '../lib/paths';
+import '@fontsource/big-shoulders-display/latin-700';
+import '@fontsource/big-shoulders-display/latin-800';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { business, serviceArea, PREVIEW_NOINDEX } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Include GeneralContractor JSON-LD (home + contact). */
+  localBusinessSchema?: boolean;
+  noindex?: boolean;
+}
+const { title, description, localBusinessSchema = false, noindex = false } = Astro.props;
+// Astro.url.pathname already includes the base path.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = abs('/og.png', Astro.site);
+const siteUrl = abs('/', Astro.site);
+const robots = PREVIEW_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex' : null;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'GeneralContractor',
+  '@id': `${siteUrl}#business`,
+  name: business.legalName,
+  alternateName: business.name,
+  url: siteUrl,
+  logo: abs('/favicon.svg', Astro.site),
+  image: ogImage,
+  telephone: business.phoneE164,
+  email: business.email,
+  slogan: business.tagline,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: business.address.street,
+    addressLocality: business.address.city,
+    addressRegion: business.address.region,
+    postalCode: business.address.postalCode,
+    addressCountry: business.address.country,
+  },
+  areaServed: [...serviceArea.areas.map((name) => ({ '@type': 'Place', name: `${name}, NY` })), { '@type': 'State', name: 'New York' }],
+  identifier: [
+    { '@type': 'PropertyValue', propertyID: 'DUNS', value: '139354417' },
+  ],
+};
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {robots && <meta name="robots" content={robots} />}
+    <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#161513" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={business.legalName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${business.legalName} — ${business.tagline}`} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="format-detection" content="telephone=no" />
+    <script is:inline>document.documentElement.classList.replace('no-js', 'js');</script>
+    {localBusinessSchema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

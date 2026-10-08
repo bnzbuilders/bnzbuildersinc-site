@@ -1,0 +1,84 @@
+---
+/** Decorative architectural line drawing (abstract interior plan).
+ *  Pure graphic: no dimensions, no project data. */
+---
+<svg class="plan" viewBox="0 0 600 680" role="img" aria-label="Decorative line drawing of an interior floor plan" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#F3F1EC" stroke-opacity=".06" stroke-width="1" />
+    </pattern>
+    <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#EA580C" stroke-opacity=".35" stroke-width="2" />
+    </pattern>
+    <pattern id="tile" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M16 0H0V16" fill="none" stroke="#F3F1EC" stroke-opacity=".18" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="600" height="680" fill="url(#g)" />
+
+  <!-- highlighted scope area + tiled bath -->
+  <rect x="64" y="84" width="232" height="242" fill="url(#hatch)" />
+  <rect x="384" y="404" width="152" height="152" fill="url(#tile)" />
+
+  <!-- dimension lines (no numbers) -->
+  <g stroke="#F3F1EC" stroke-opacity=".45" stroke-width="1" fill="none">
+    <path d="M60 44H540M60 36V52M540 36V52M300 38V50" />
+    <path d="M572 80V560M564 80H580M564 560H580M566 330H578" />
+    <path d="M60 596H380M60 588V604M380 588V604" />
+  </g>
+
+  <!-- walls -->
+  <g stroke="#F3F1EC" stroke-linecap="square" fill="none">
+    <rect x="60" y="80" width="480" height="480" stroke-width="8" />
+    <path stroke-width="5" d="M300 80V250M300 300V330M60 330H180M230 330H420M470 330H540M380 330V420M380 470V560M300 230H380M430 230H540" />
+  </g>
+
+  <!-- windows -->
+  <g stroke="#0A0A0A" stroke-width="6">
+    <path d="M120 80H230M380 80H480M60 400V500" />
+  </g>
+  <g stroke="#F3F1EC" stroke-opacity=".8" stroke-width="1.5">
+    <path d="M120 77H230M120 83H230M380 77H480M380 83H480M57 400V500M63 400V500" />
+  </g>
+
+  <!-- door swings -->
+  <g stroke="#EA580C" stroke-width="1.5" fill="none">
+    <path d="M300 250L345 250M300 250A50 50 0 0 1 345 300" transform="translate(0,0)" />
+    <path d="M180 330V285A45 45 0 0 1 225 330" />
+    <path d="M420 330V375A45 45 0 0 0 465 330" />
+    <path d="M380 420H425A45 45 0 0 1 380 465" />
+    <path d="M380 230V185A45 45 0 0 1 425 230" />
+  </g>
+
+  <!-- bath fixtures -->
+  <g stroke="#F3F1EC" stroke-opacity=".85" stroke-width="1.5" fill="#0A0A0A">
+    <rect x="490" y="412" width="40" height="22" rx="3" />
+    <ellipse cx="510" cy="452" rx="15" ry="20" />
+    <rect x="392" y="520" width="56" height="30" rx="4" />
+    <circle cx="420" cy="535" r="7" fill="none" />
+  </g>
+
+  <!-- section marker -->
+  <g>
+    <path d="M110 470H330" stroke="#EA580C" stroke-width="2" stroke-dasharray="10 6" />
+    <circle cx="96" cy="470" r="16" fill="#EA580C" />
+    <text x="96" y="476" text-anchor="middle" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="800" font-size="18" fill="#0A0A0A">A</text>
+  </g>
+
+  <!-- north arrow -->
+  <g transform="translate(500 620)" stroke="#F3F1EC" stroke-opacity=".7" fill="none" stroke-width="1.5">
+    <circle r="18" />
+    <path d="M0 -14L7 8L0 3L-7 8Z" fill="#F3F1EC" fill-opacity=".7" />
+  </g>
+
+  <!-- title block -->
+  <g font-family="Inter Variable, Inter, Arial, sans-serif" fill="#F3F1EC">
+    <path d="M60 628H440" stroke="#F3F1EC" stroke-opacity=".3" />
+    <text x="60" y="652" font-size="12" font-weight="700" letter-spacing="2.4">BNZ BUILDERS INC.</text>
+    <text x="60" y="670" font-size="10" fill-opacity=".6" letter-spacing="2">INTERIORS · PUBLIC WORKS · SCOPE TO PUNCH LIST</text>
+  </g>
+</svg>
+
+<style>
+  .plan { width: 100%; height: auto; }
+</style>

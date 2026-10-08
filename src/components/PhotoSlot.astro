@@ -1,0 +1,10 @@
+---
+import { u } from '../lib/paths';
+/** Clearly labelled placeholder for a real photo. Never swap in stock images
+ *  that could be mistaken for BNZ work. Pass `src` once a real photo exists. */
+interface Props { src?: string; alt?: string; label?: string; portrait?: boolean }
+const { src, alt = '', label = 'Project photo coming soon', portrait = false } = Astro.props;
+---
+{src
+  ? <img class="photo" src={u(src)} alt={alt} loading="lazy" />
+  : <div class:list={['photo-slot', { 'photo-slot--portrait': portrait }]} role="img" aria-label={`Placeholder: ${label}`}><span>{label}</span></div>}

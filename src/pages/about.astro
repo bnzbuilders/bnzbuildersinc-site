@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { about, business, differentiators, team, serviceArea } from '../data/site';
+---
+<Base title={about.seoTitle} description={about.seoDescription}>
+  <PageHero eyebrow="About" title={business.aboutLine} />
+
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Who we are</p>
+        <h2>New York interiors. One PM.</h2>
+      </div>
+      <div class="story">
+        {about.story.map((p, i) => <p class={i === 0 ? 'lead' : ''}>{p}</p>)}
+        <p class="muted">Serving {serviceArea.areas.join(', ')}. {serviceArea.note}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark" aria-labelledby="diff-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Differentiators</p>
+        <h2 id="diff-h">How we run a job.</h2>
+      </div>
+      <div class="grid grid--4">
+        {differentiators.map((d, i) => (
+          <div class="card--line card">
+            <p class="svc-num" style="color:var(--orange)">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{d.title}</h3>
+            <p>{d.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="team-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Leadership</p>
+        <h2 id="team-h">People who answer the phone.</h2>
+      </div>
+      <div class="grid grid--3">
+        {team.map((m) => (
+          <article class="person">
+            <PhotoSlot src={m.photo || undefined} alt={`${m.name}, ${m.role}`} label="Photo coming soon" portrait />
+            <h3>{m.name}</h3>
+            <p class="muted">{m.role}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .story p { max-width: 40em; }
+  .person h3 { margin: 20px 0 4px; }
+  .person .photo { aspect-ratio: 4 / 5; }
+</style>

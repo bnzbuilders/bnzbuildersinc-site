@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { business, addressOneLine, privacy, FORM_ENDPOINT } from '../data/site';
+---
+<Base title="Privacy Policy | BNZ Builders Inc." description="How BNZ Builders Inc. handles information you send through this website.">
+  <PageHero eyebrow="Privacy" title="Privacy policy." lead={`Last updated ${privacy.lastUpdated}.`} />
+  <section class="section">
+    <div class="wrap prose">
+      <p>This policy covers the website of {business.legalName} ("BNZ", "we"). It is short because we collect very little.</p>
+      <h2>What we collect</h2>
+      <ul>
+        <li><strong>Information you send us.</strong> When you use the quote request, careers or vendor links, you send us your name, contact details and project information. {FORM_ENDPOINT ? 'The quote form is delivered through a third-party form service.' : 'These open your own email app; nothing is stored by this website.'}</li>
+        <li><strong>Basic server logs.</strong> Our hosting provider may keep standard technical logs (such as IP address and browser type) to run and secure the site.</li>
+      </ul>
+      <p>This site does not use advertising cookies or tracking pixels.</p>
+      <h2>How we use it</h2>
+      <p>We use what you send only to respond to you, prepare proposals, evaluate job applicants and vendors, and run our projects. We do not sell or rent personal information.</p>
+      <h2>Sharing</h2>
+      <p>We share information only with people who help us do the work you asked about (for example, our accountant, insurers or a project owner when you are working on their job), or when the law requires it.</p>
+      <h2>Retention</h2>
+      <p>We keep messages and records as long as needed for the purpose they were sent and for our legal, tax and contract obligations.</p>
+      <h2>Your choices</h2>
+      <p>Ask us to see, correct or delete the information you sent by emailing <a href={`mailto:${business.email}`}>{business.email}</a>.</p>
+      <h2>Contact</h2>
+      <p>{business.legalName}<br />{addressOneLine}<br /><a href={business.phoneHref}>{business.phoneDisplay}</a> · <a href={`mailto:${business.email}`}>{business.email}</a></p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,141 @@
+---
+import { u } from '../lib/paths';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { contact, business, addressOneLine, FORM_ENDPOINT } from '../data/site';
+// With no endpoint configured, the no-JS fallback posts to mailto:.
+const action = FORM_ENDPOINT || `mailto:${business.email}?subject=${encodeURIComponent('Quote request — website')}`;
+---
+<Base title={contact.seoTitle} description={contact.seoDescription} localBusinessSchema>
+  <PageHero eyebrow="Contact" title={contact.heading} lead={contact.lead} />
+
+  <section class="section">
+    <div class="wrap contact-grid">
+      <aside class="contact-card" aria-labelledby="direct-h">
+        <h2 id="direct-h">Reach us directly.</h2>
+        <dl>
+          <dt>Phone</dt><dd><a href={business.phoneHref}>{business.phoneDisplay}</a></dd>
+          <dt>Email</dt><dd><a href={`mailto:${business.email}`}>{business.email}</a></dd>
+          <dt>Office</dt><dd><address>{business.legalName}<br />{addressOneLine}</address></dd>
+        </dl>
+        <p class="muted">Public agency or GC sending a bid invitation? Email the package or plan-room link and see our <a href={u('/public-works/')}>credentials</a>.</p>
+      </aside>
+
+      <form
+        class="form"
+        id="quote-form"
+        action={action}
+        method="post"
+        enctype={FORM_ENDPOINT ? undefined : 'text/plain'}
+        data-endpoint={FORM_ENDPOINT}
+        data-email={business.email}
+        novalidate
+      >
+        <div class="form-row">
+          <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required /></div>
+          <div class="field"><label for="f-company">Company <span class="opt">(optional)</span></label><input id="f-company" name="company" autocomplete="organization" /></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required /></div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-type">Project type</label>
+            <select id="f-type" name="project_type" required>
+              <option value="">Select…</option>
+              {contact.projectTypes.map((t) => <option>{t}</option>)}
+            </select>
+          </div>
+          <div class="field"><label for="f-location">Project location</label><input id="f-location" name="location" placeholder="Town or neighborhood, NY" required /></div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-timeline">Timeline</label>
+            <select id="f-timeline" name="timeline" required>
+              <option value="">Select…</option>
+              {contact.timelines.map((t) => <option>{t}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-budget">Budget range <span class="opt">(optional)</span></label>
+            <select id="f-budget" name="budget">
+              {contact.budgets.map((t) => <option>{t}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-desc">Project description</label>
+          <textarea id="f-desc" name="description" required placeholder="Scope, size, building type, occupied or vacant, drawings available…"></textarea>
+        </div>
+        <div class="hp" aria-hidden="true"><label for="f-hp">Leave this empty</label><input id="f-hp" name="_gotcha" tabindex="-1" autocomplete="off" /></div>
+        <div>
+          <button class="btn btn--primary" type="submit">Send request <span class="arrow" aria-hidden="true">→</span></button>
+        </div>
+        <p class="form-note">
+          {FORM_ENDPOINT
+            ? 'We use your details only to respond to this request.'
+            : `Sending opens your email app with this request filled in, addressed to ${business.email}.`}
+          {' '}<a href={u('/privacy/')}>Privacy</a>.
+        </p>
+        <div class="form-status" role="status" aria-live="polite" tabindex="-1"></div>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.getElementById('quote-form') as HTMLFormElement | null;
+  if (form) {
+    const status = form.querySelector<HTMLElement>('.form-status')!;
+    const endpoint = form.dataset.endpoint || '';
+    const email = form.dataset.email || '';
+    const show = (html: string) => { status.innerHTML = html; status.classList.add('is-visible'); status.focus(); };
+    const labels: Record<string, string> = {
+      name: 'Name', company: 'Company', email: 'Email', phone: 'Phone', project_type: 'Project type',
+      location: 'Location', timeline: 'Timeline', budget: 'Budget range', description: 'Description',
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const data = new FormData(form);
+      if (data.get('_gotcha')) return; // bot
+      data.delete('_gotcha');
+
+      if (endpoint) {
+        try {
+          const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+          if (!res.ok) throw new Error(String(res.status));
+          form.reset();
+          show('<strong>Request received.</strong> We will be in touch.');
+          return;
+        } catch {
+          // fall through to mailto so no request is lost
+        }
+      }
+      const lines = Object.keys(labels).map((k) => `${labels[k]}: ${(data.get(k) || '').toString().trim() || '—'}`);
+      const subject = `Quote request — ${(data.get('project_type') || 'Project').toString()} — ${(data.get('location') || '').toString()}`;
+      const href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+      window.location.href = href;
+      show(`Your email app should open with this request filled in. Press send there to reach us. If nothing opened, email <a href="mailto:${email}">${email}</a> or call us.`);
+    });
+  }
+</script>
+
+<style>
+  .contact-grid { display: grid; gap: 40px; }
+  @media (min-width: 960px) { .contact-grid { grid-template-columns: 4fr 7fr; gap: 64px; align-items: start; } }
+  .contact-card { background: var(--ink); color: var(--paper); padding: clamp(28px, 4vw, 44px); border-top: 4px solid var(--orange); }
+  .contact-card h2 { font-size: clamp(2rem, 4vw, 2.6rem); }
+  .contact-card dl { margin: 24px 0; }
+  .contact-card dt { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-top: 18px; }
+  .contact-card dd { margin: 4px 0 0; font-weight: 600; font-size: 1.05rem; word-break: break-word; }
+  .contact-card a { text-decoration: none; }
+  .contact-card a:hover { color: var(--orange); }
+  .contact-card .muted { color: var(--muted-dark); font-size: 0.95rem; }
+  .contact-card .muted a { text-decoration: underline; }
+</style>

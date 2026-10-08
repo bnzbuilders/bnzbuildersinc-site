@@ -1,0 +1,14 @@
+---
+/** Label/value list for registrations and company data. */
+interface Row { label: string; value: string; href?: string }
+interface Props { rows: Row[]; label?: string }
+const { rows, label } = Astro.props;
+---
+<dl class="cred-list" aria-label={label}>
+  {rows.map((r) => (
+    <div class="cred-row">
+      <dt>{r.label}</dt>
+      <dd>{r.href ? <a href={r.href}>{r.value}</a> : r.value}</dd>
+    </div>
+  ))}
+</dl>

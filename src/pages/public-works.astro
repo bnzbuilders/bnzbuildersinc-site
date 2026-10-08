@@ -1,0 +1,55 @@
+---
+import { u } from '../lib/paths';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import CredList from '../components/CredList.astro';
+import { publicWorks, credentials, onRequest, business, scopes } from '../data/site';
+const publicScopes = scopes.filter((s) => /OPWDD|IRA|municipal|painting|Drywall|Bathroom|Acoustical|Flooring/i.test(s));
+---
+<Base title={publicWorks.seoTitle} description={publicWorks.seoDescription}>
+  <PageHero eyebrow="Public Works & Credentials" title={publicWorks.heading} lead={publicWorks.lead}>
+    <div class="btn-row" style="margin-top:28px">
+      <a class="btn btn--primary" href={u('/capability-statement/')}>Capability statement</a>
+      <a class="btn btn--ghost" href={`mailto:${business.email}?subject=${encodeURIComponent('Bid invitation / credentials request')}`}>Send a bid invitation</a>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Agency work</p>
+        <h2>Built for public owners.</h2>
+      </div>
+      <div class="grid grid--4">
+        {publicWorks.capabilities.map((c) => (
+          <div class="card--line card"><h3>{c.title}</h3><p class="muted">{c.text}</p></div>
+        ))}
+      </div>
+      <div style="margin-top:48px">
+        <p class="dim" style="margin-bottom:18px">Typical agency scopes</p>
+        <ul class="chips">{publicScopes.map((s) => <li>{s}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark" id="credentials" aria-labelledby="cred-h">
+    <div class="wrap split split--even">
+      <div>
+        <p class="eyebrow">Credentials</p>
+        <h2 id="cred-h">Facts on file.</h2>
+        <div style="margin-top:24px"><CredList label="Registrations and identifiers" rows={[...credentials, { label: 'Phone', value: business.phoneDisplay, href: business.phoneHref }, { label: 'Email', value: business.email, href: `mailto:${business.email}` }]} /></div>
+      </div>
+      <div>
+        <p class="eyebrow">Available on request</p>
+        <h3 style="font-size:2rem">Documents for your bid file.</h3>
+        <ul class="check-list" style="margin-top:20px">
+          {onRequest.map((d) => <li>{d}</li>)}
+        </ul>
+        <p class="muted" style="margin-top:24px">{business.bondingNote} No bonding amounts are published on this site.</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand heading="Bidding public work? Put us on the list." text="Send the bid package, plan room link or invitation to bid. We will confirm fit and requirements." />
+</Base>
