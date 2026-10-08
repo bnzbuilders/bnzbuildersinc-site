@@ -1,11 +1,10 @@
 ---
 import { u } from '../lib/paths';
 import Base from '../layouts/Base.astro';
-import CredList from '../components/CredList.astro';
-import { business, addressOneLine, services, differentiators, serviceArea, naics, credentials } from '../data/site';
-const ids = credentials.filter((c) => ['D-U-N-S', 'NYC DCWP', 'NYSDOL public work registration'].includes(c.label));
+import { business, officeLine, services, serviceArea, naics, publicProjects, projectLocation, projectStatusLabel, documentsLine, deliveryApproach, leadership, SHOW_CREDENTIALS, credentialsPendingVerification } from '../data/site';
+const documented = publicProjects.filter((p) => p.agencyApproved && p.agency);
 ---
-<Base title="Capability Statement | BNZ Builders Inc." description="One-page capability statement for BNZ Builders Inc.: core competencies, differentiators, registrations and contact. Print or save as PDF.">
+<Base title="Capability Statement | BNZ Builders Inc." description="One-page capability statement for BNZ Builders Inc.: core competencies, documented work, service area and contact. Print or save as PDF.">
   <section class="section cap-wrap">
     <div class="wrap">
       <div class="cap-actions no-print">
@@ -22,25 +21,34 @@ const ids = credentials.filter((c) => ['D-U-N-S', 'NYC DCWP', 'NYSDOL public wor
             </div>
           </div>
           <ul class="cap-contact">
-            <li>{addressOneLine}</li>
+            <li>{officeLine}</li>
             <li>{business.phoneDisplay}</li>
             <li>{business.email}</li>
+            <li>bnzbuilders.com</li>
           </ul>
         </header>
         <div class="cap-grid">
           <section>
             <h2>Core competencies</h2>
-            <ul>{services.map((s) => <li><strong>{s.title}.</strong> {s.text}</li>)}</ul>
+            <ul>{services.map((s) => <li><strong>{s.title}.</strong> {s.items.join(', ')}.</li>)}</ul>
           </section>
           <section>
-            <h2>Differentiators</h2>
-            <ul>{differentiators.map((d) => <li>{d.title}</li>)}</ul>
+            <h2>Approach</h2>
+            <ul>{deliveryApproach.map((d) => <li><strong>{d.title}.</strong> {d.text}</li>)}</ul>
             <h2>Area served</h2>
-            <p>{serviceArea.areas.join(' · ')}. {serviceArea.note}</p>
+            <p>{serviceArea.note}</p>
           </section>
           <section>
+            <h2>Documented work</h2>
+            <ul>{documented.map((p) => <li><strong>{p.title}</strong> — {projectLocation(p)}. <em>{projectStatusLabel(p)}.</em></li>)}</ul>
+            <h2>Leadership</h2>
+            <ul>{leadership.map((m) => <li>{m.name}, {m.role}</li>)}</ul>
             <h2>Company data</h2>
-            <CredList label="Company data" rows={[...ids, { label: 'NAICS', value: naics.length ? naics.map((n) => `${n.code} ${n.label}`).join(', ') : 'Available on request' }, { label: 'Bonding', value: 'Available based on project requirements' }]} />
+            <ul>
+              <li>NAICS: {naics.length ? naics.map((n) => `${n.code} ${n.label}`).join(', ') : 'available on request'}</li>
+              {SHOW_CREDENTIALS && credentialsPendingVerification.map((c) => <li>{c.label}: {c.value}</li>)}
+              <li>{documentsLine}</li>
+            </ul>
           </section>
         </div>
       </article>
@@ -53,20 +61,17 @@ const ids = credentials.filter((c) => ['D-U-N-S', 'NYC DCWP', 'NYSDOL public wor
 <style>
   .cap-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
   .cap-actions p { margin: 0; }
-  .cap { background: var(--white); border: 1px solid var(--line); border-top: 8px solid var(--orange); padding: clamp(24px, 4vw, 56px); }
+  .cap { background: var(--white); border: 1px solid var(--line); border-top: 8px solid var(--tan); padding: clamp(24px, 4vw, 56px); }
   .cap-head { display: grid; gap: 20px; padding-bottom: 28px; border-bottom: 2px solid var(--ink); }
   .cap-brand { display: flex; gap: 18px; align-items: center; }
-  .cap-brand h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); margin: 0; }
+  .cap-brand h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: 0; }
   .cap-brand p { margin: 4px 0 0; font-weight: 600; color: var(--muted); }
   .cap-contact { list-style: none; margin: 0; padding: 0; font-weight: 600; font-size: 0.95rem; }
   .cap-grid { display: grid; gap: 32px; margin-top: 28px; }
-  .cap h2 { font-size: 1.4rem; color: var(--orange-text); margin: 0 0 12px; }
+  .cap h2 { font-size: 1.05rem; letter-spacing: .06em; margin: 0 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--tan); display: inline-block; }
   .cap section h2 + ul, .cap section > p { margin-bottom: 24px; }
   .cap ul { padding-left: 1.1em; margin: 0; }
-  .cap li { margin-bottom: 8px; font-size: 0.95rem; }
-  .cap :global(.cred-row) { grid-template-columns: 50% 1fr; }
-  .cap :global(.cred-row dt) { font-size: 0.7rem; }
-  .cap :global(.cred-row dd) { font-size: 0.95rem; }
+  .cap li, .cap p { margin-bottom: 8px; font-size: 0.92rem; }
   @media (min-width: 900px) {
     .cap-head { grid-template-columns: 1fr auto; align-items: end; }
     .cap-contact { text-align: right; }
@@ -76,7 +81,7 @@ const ids = credentials.filter((c) => ['D-U-N-S', 'NYC DCWP', 'NYSDOL public wor
     :global(.site-header), :global(.site-footer), :global(.skip-link), .no-print { display: none !important; }
     :global(body) { background: #fff; }
     .cap-wrap { padding: 0; }
-    .cap { border: 0; border-top: 6px solid var(--orange); padding: 0; }
+    .cap { border: 0; border-top: 6px solid var(--tan); padding: 0; }
     .cap-grid { grid-template-columns: 1.3fr 1fr 1fr; }
     .cap-head { grid-template-columns: 1fr auto; }
     .cap-contact { text-align: right; }

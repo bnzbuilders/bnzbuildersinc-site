@@ -1,41 +1,47 @@
 ---
 import { u } from '../lib/paths';
-import { nav, business, addressOneLine, credentials } from '../data/site';
+import { footerNav, business, officeLine, services } from '../data/site';
+import Brand from './Brand.astro';
 const year = new Date().getFullYear();
-const ids = credentials.filter((c) => ['D-U-N-S', 'NYC DCWP', 'NYSDOL public work registration'].includes(c.label));
 ---
 <footer class="site-footer">
   <div class="wrap">
+    <div class="footer-top">
+      <p class="footer-tag">{business.tagline}</p>
+      <a class="btn btn--primary" href={u('/contact/')}>Request a Quote <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href={u('/')} aria-label={`${business.legalName} — home`}>
-          <img src={u('/favicon.svg')} alt="" width="38" height="38" />
-          <span class="brand-word">BNZ <span>Builders</span></span>
-        </a>
-        <p>{business.credentialLine}. {business.tagline}</p>
+        <Brand />
+        <p>Commercial construction, renovations, professional painting and public works across New York.</p>
       </div>
       <div>
         <p class="footer-h">Contact</p>
         <address>
           <ul class="footer-list">
             <li>{business.legalName}</li>
-            <li>{addressOneLine}</li>
+            <li>{officeLine}</li>
             <li><a href={business.phoneHref}>{business.phoneDisplay}</a></li>
             <li><a href={`mailto:${business.email}`}>{business.email}</a></li>
           </ul>
         </address>
       </div>
       <div>
+        <p class="footer-h">Services</p>
+        <ul class="footer-list">
+          {services.map((s) => <li><a href={u(`/services/#${s.slug}`)}>{s.title}</a></li>)}
+        </ul>
+      </div>
+      <div>
         <p class="footer-h">Company</p>
         <ul class="footer-list">
-          {nav.map((item) => <li><a href={u(item.href)}>{item.label}</a></li>)}
-          <li><a href={u('/capability-statement/')}>Capability Statement</a></li>
+          {footerNav.map((item) => <li><a href={u(item.href)}>{item.label}</a></li>)}
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© {year} {business.legalName} · {ids.map((c) => `${c.label} ${c.value}`).join(' · ')}</span>
-      <span>{business.bondingNote} · <a href={u('/privacy/')}>Privacy</a></span>
+      <span>© {year} {business.legalName} · Cedarhurst, New York</span>
+      <span>Commercial general contractor · New York State · <a href={u('/privacy/')}>Privacy</a></span>
     </div>
   </div>
 </footer>

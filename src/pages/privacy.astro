@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { business, addressOneLine, privacy, FORM_ENDPOINT } from '../data/site';
+import { business, officeLine, privacy, FORM_ENDPOINT } from '../data/site';
 ---
 <Base title="Privacy Policy | BNZ Builders Inc." description="How BNZ Builders Inc. handles information you send through this website.">
   <PageHero eyebrow="Privacy" title="Privacy policy." lead={`Last updated ${privacy.lastUpdated}.`} />
@@ -17,13 +17,13 @@ import { business, addressOneLine, privacy, FORM_ENDPOINT } from '../data/site';
       <h2>How we use it</h2>
       <p>We use what you send only to respond to you, prepare proposals, evaluate job applicants and vendors, and run our projects. We do not sell or rent personal information.</p>
       <h2>Sharing</h2>
-      <p>We share information only with people who help us do the work you asked about (for example, our accountant, insurers or a project owner when you are working on their job), or when the law requires it.</p>
+      <p>We share information only with people who help us do the work you asked about (for example, our accountant or a project owner when you are working on their job), or when the law requires it.</p>
       <h2>Retention</h2>
       <p>We keep messages and records as long as needed for the purpose they were sent and for our legal, tax and contract obligations.</p>
       <h2>Your choices</h2>
       <p>Ask us to see, correct or delete the information you sent by emailing <a href={`mailto:${business.email}`}>{business.email}</a>.</p>
       <h2>Contact</h2>
-      <p>{business.legalName}<br />{addressOneLine}<br /><a href={business.phoneHref}>{business.phoneDisplay}</a> · <a href={`mailto:${business.email}`}>{business.email}</a></p>
+      <p>{business.legalName}<br />{officeLine}<br /><a href={business.phoneHref}>{business.phoneDisplay}</a> · <a href={`mailto:${business.email}`}>{business.email}</a></p>
     </div>
   </section>
 </Base>

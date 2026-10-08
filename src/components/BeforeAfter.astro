@@ -1,0 +1,34 @@
+---
+import PhotoSlot from './PhotoSlot.astro';
+import type { Photo } from '../data/site';
+/** Before / after comparison. With JS: a drag slider (keyboard accessible
+ *  range input). Without JS: side-by-side. Works with placeholders. */
+interface Props { before?: Photo; after?: Photo; label?: string; id: string }
+const { before, after, label = 'Project', id } = Astro.props;
+---
+<figure class="ba" data-ba>
+  <div class="ba-stage">
+    <div class="ba-pane ba-before">
+      <PhotoSlot src={before?.src} alt={before?.alt} label="Before photo — pending approval" ratio="16 / 10" tone="dark" />
+      <span class="ba-tag">Before</span>
+    </div>
+    <div class="ba-pane ba-after">
+      <PhotoSlot src={after?.src} alt={after?.alt} label="After photo — pending approval" ratio="16 / 10" tone="light" />
+      <span class="ba-tag ba-tag--after">After</span>
+    </div>
+    <div class="ba-handle" aria-hidden="true"><span></span></div>
+  </div>
+  <label class="ba-range-label visually-hidden" for={`ba-${id}`}>Compare before and after: {label}</label>
+  <input class="ba-range" id={`ba-${id}`} type="range" min="0" max="100" value="50" />
+  <figcaption class="ba-cap">{label}: before / after. Photos are added only after owner approval.</figcaption>
+</figure>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((fig) => {
+    const range = fig.querySelector<HTMLInputElement>('.ba-range');
+    if (!range) return;
+    fig.classList.add('ba--slider');
+    const set = () => fig.style.setProperty('--ba', `${range.value}%`);
+    range.addEventListener('input', set);
+    set();
+  });
+</script>

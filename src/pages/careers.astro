@@ -5,13 +5,13 @@ import { careers, business } from '../data/site';
 const mail = (subject: string, body: string) =>
   `mailto:${business.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 const careersMail = mail('Careers — field interest', 'Name:\nPhone:\nTrade / experience:\nOSHA card (yes/no):\nWhere you are based:\n\nShort note:\n');
-const subsMail = mail('Vendor intro — [your trade]', 'Company:\nContact name:\nPhone:\nTrade(s):\nCoverage area:\nW-9 status:\nCOI (attach or describe):\n');
+const subsMail = mail('Vendor intro — [your trade]', 'Company:\nContact name:\nPhone:\nTrade(s):\nCoverage area:\n\nShort note:\n');
 ---
 <Base title={careers.seoTitle} description={careers.seoDescription}>
   <PageHero eyebrow="Careers & Subcontractors" title="Work with BNZ." lead="Field crew and trade partners across New York." />
 
   <section class="section">
-    <div class="wrap split split--even">
+    <div class="wrap grid grid--2">
       <article class="panel" aria-labelledby="careers-h">
         <p class="eyebrow">Careers</p>
         <h2 id="careers-h">{careers.careersHeading}</h2>
@@ -20,10 +20,10 @@ const subsMail = mail('Vendor intro — [your trade]', 'Company:\nContact name:\
         <p class="form-note" style="margin-top:14px">Opens your email app, addressed to {business.email}.</p>
       </article>
       <article class="panel panel--dark" aria-labelledby="subs-h">
-        <p class="eyebrow">Trade partners</p>
+        <p class="eyebrow eyebrow--light">Trade partners</p>
         <h2 id="subs-h">{careers.subsHeading}</h2>
         <p class="lead">{careers.subsText}</p>
-        <ul class="chips" style="margin:8px 0 28px">{careers.trades.map((t) => <li>{t}</li>)}</ul>
+        <ul class="chips chips--dark">{careers.trades.map((t) => <li>{t}</li>)}</ul>
         <a class="btn btn--primary" href={subsMail}>Send vendor intro <span class="arrow" aria-hidden="true">→</span></a>
         <p class="form-note" style="margin-top:14px">Opens your email app, addressed to {business.email}.</p>
       </article>
@@ -31,12 +31,3 @@ const subsMail = mail('Vendor intro — [your trade]', 'Company:\nContact name:\
   </section>
 </Base>
 
-<style>
-  .panel { background: var(--white); border: 1px solid var(--line); border-top: 4px solid var(--orange); padding: clamp(28px, 4vw, 52px); }
-  .panel h2 { font-size: clamp(2.2rem, 5vw, 3.4rem); }
-  .panel--dark { background: var(--ink); color: var(--paper); border-color: var(--ink); border-top-color: var(--orange); }
-  .panel--dark .eyebrow { color: var(--orange); }
-  .panel--dark .lead { color: var(--muted-dark); }
-  .panel--dark .chips li { border-color: rgba(243,241,236,.25); background: transparent; }
-  .panel--dark .form-note { color: var(--muted-dark); }
-</style>

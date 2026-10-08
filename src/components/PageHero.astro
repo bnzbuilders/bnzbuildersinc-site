@@ -3,8 +3,19 @@ interface Props { eyebrow: string; title: string; lead?: string }
 const { eyebrow, title, lead } = Astro.props;
 ---
 <section class="page-hero">
-  <div class="wrap">
-    <p class="eyebrow">{eyebrow}</p>
+  <div class="page-hero-art" aria-hidden="true">
+    <svg viewBox="0 0 400 300" preserveAspectRatio="xMaxYMid slice">
+      <g fill="none" stroke="currentColor" stroke-width="1">
+        <path d="M60 280V90h140v190M200 280V40h120v240M80 110h100M80 140h100M80 170h100M80 200h100M80 230h100M220 60h80M220 90h80M220 120h80M220 150h80M220 180h80M220 210h80M220 240h80" />
+        <path d="M20 280h370" />
+        <path d="M60 20h260M60 14v12M200 14v12M320 14v12" stroke-dasharray="3 4" />
+        <circle cx="60" cy="20" r="0" />
+      </g>
+      <path d="M345 280V30M345 30h-150M345 30h40M300 30v70" fill="none" stroke="var(--tan)" stroke-width="1.5" />
+    </svg>
+  </div>
+  <div class="wrap page-hero-inner">
+    <p class="eyebrow eyebrow--light">{eyebrow}</p>
     <h1>{title}</h1>
     {lead && <p class="lead">{lead}</p>}
     <slot />

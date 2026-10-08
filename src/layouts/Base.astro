@@ -1,51 +1,52 @@
 ---
-import { u, abs } from '../lib/paths';
-import '@fontsource/big-shoulders-display/latin-700';
-import '@fontsource/big-shoulders-display/latin-800';
+import { u, abs, unbase } from '../lib/paths';
+import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource-variable/inter';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { business, serviceArea, PREVIEW_NOINDEX } from '../data/site';
+import { business, services, PREVIEW_NOINDEX, SHOW_OFFICE_STREET } from '../data/site';
 
 interface Props {
   title: string;
   description: string;
-  /** Include GeneralContractor JSON-LD (home + contact). */
+  /** Include GeneralContractor JSON-LD. */
   localBusinessSchema?: boolean;
+  /** Per-page noindex (e.g. 404). PREVIEW_NOINDEX applies to every page regardless. */
   noindex?: boolean;
 }
 const { title, description, localBusinessSchema = false, noindex = false } = Astro.props;
-// Astro.url.pathname already includes the base path.
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = abs('/og.png', Astro.site);
-const siteUrl = abs('/', Astro.site);
+// Canonical always points at the launch domain (https://bnzbuilders.com), without the preview base.
+const canonical = abs(unbase(Astro.url.pathname));
+const ogImage = abs('/og.png');
+const siteUrl = abs('/');
 const robots = PREVIEW_NOINDEX ? 'noindex, nofollow' : noindex ? 'noindex' : null;
 
+// Only verified, public facts. No licenses, certifications, ratings or bonding.
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   '@id': `${siteUrl}#business`,
   name: business.legalName,
-  alternateName: business.name,
   url: siteUrl,
-  logo: abs('/favicon.svg', Astro.site),
+  logo: abs('/favicon.svg'),
   image: ogImage,
+  description: business.summary,
   telephone: business.phoneE164,
   email: business.email,
-  slogan: business.tagline,
   address: {
     '@type': 'PostalAddress',
-    streetAddress: business.address.street,
+    ...(SHOW_OFFICE_STREET ? { streetAddress: business.address.street, postalCode: business.address.postalCode } : {}),
     addressLocality: business.address.city,
     addressRegion: business.address.region,
-    postalCode: business.address.postalCode,
     addressCountry: business.address.country,
   },
-  areaServed: [...serviceArea.areas.map((name) => ({ '@type': 'Place', name: `${name}, NY` })), { '@type': 'State', name: 'New York' }],
-  identifier: [
-    { '@type': 'PropertyValue', propertyID: 'DUNS', value: '139354417' },
+  areaServed: [
+    { '@type': 'State', name: 'New York' },
+    { '@type': 'City', name: 'New York City' },
+    { '@type': 'Place', name: 'Long Island, NY' },
   ],
+  knowsAbout: services.map((s) => s.title),
 };
 ---
 <!doctype html>
@@ -58,7 +59,8 @@ const schema = {
     {!noindex && <link rel="canonical" href={canonical} />}
     {robots && <meta name="robots" content={robots} />}
     <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
-    <meta name="theme-color" content="#161513" />
+    <link rel="sitemap" href={u('/sitemap-index.xml')} />
+    <meta name="theme-color" content="#18302a" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={business.legalName} />
     <meta property="og:title" content={title} />
@@ -84,5 +86,18 @@ const schema = {
       <slot />
     </main>
     <Footer />
+    <script>
+      // Subtle reveal-on-scroll. Skipped entirely when reduced motion is requested.
+      const els = document.querySelectorAll<HTMLElement>('.reveal');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,26 @@
+---
+import { u } from '../lib/paths';
+import PhotoSlot from './PhotoSlot.astro';
+import StatusBadge from './StatusBadge.astro';
+import { projectLocation, type Project } from '../data/site';
+interface Props { project: Project; headingLevel?: 'h2' | 'h3' }
+const { project: p, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const cover = p.photos[0];
+---
+<article class="project-card reveal">
+  <a class="project-card-media" href={u(`/projects/#${p.slug}`)} tabindex="-1" aria-hidden="true">
+    <PhotoSlot src={cover?.src} alt={cover?.alt} ratio="16 / 10" />
+  </a>
+  <div class="project-card-body">
+    <div class="project-card-top">
+      <StatusBadge project={p} />
+    </div>
+    <p class="meta">{projectLocation(p)} · {p.trade}</p>
+    <H class="project-card-title"><a href={u(`/projects/#${p.slug}`)}>{p.title}</a></H>
+    {p.agencyApproved && p.agency && <p class="project-card-agency">{p.agency}</p>}
+    <ul class="tick-list tick-list--compact">
+      {p.scope.slice(0, 4).map((s) => <li>{s}</li>)}
+    </ul>
+  </div>
+</article>

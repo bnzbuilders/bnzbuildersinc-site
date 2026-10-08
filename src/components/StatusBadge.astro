@@ -1,0 +1,8 @@
+---
+import { projectStatusLabel, type Project } from '../data/site';
+interface Props { project: Project }
+const { project } = Astro.props;
+const label = projectStatusLabel(project);
+const verified = label === 'Completed';
+---
+<span class:list={['status', { 'status--verified': verified }]}><span class="status-dot" aria-hidden="true"></span>{label}</span>

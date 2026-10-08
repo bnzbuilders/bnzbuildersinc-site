@@ -1,10 +1,13 @@
 /**
- * Base-path helpers. The site may live under a sub-path (GitHub Pages project
- * site: /bnzbuildersinc-site/) or at the domain root. ALWAYS build internal
- * links and asset URLs with u('/path/') so they respect the base.
+ * Base-path helpers. The build may be served under a sub-path (GitHub Pages
+ * project preview: /bnzbuildersinc-site/) or at the domain root (launch).
+ * ALWAYS build internal links and asset URLs with u('/path/').
  */
 const rawBase = import.meta.env.BASE_URL || '/';
 export const BASE = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+/** Launch origin (Astro `site`, from deploy.config.mjs). */
+export const ORIGIN = (import.meta.env.SITE || 'https://bnzbuilders.com').replace(/\/+$/, '');
 
 /** '/services/' → '/bnzbuildersinc-site/services/' (external, mailto, tel and # untouched). */
 export function u(path: string): string {
@@ -12,7 +15,12 @@ export function u(path: string): string {
   return BASE + path.replace(/^\/+/, '');
 }
 
-/** Absolute URL including site + base, e.g. for canonical, OG, JSON-LD, sitemap. */
-export function abs(path: string, site: URL | undefined): string {
-  return new URL(u(path), site ?? 'https://bnzbuildersinc.com').href;
+/** Strip the base from a served pathname: '/bnzbuildersinc-site/services/' → '/services/'. */
+export function unbase(pathname: string): string {
+  return pathname.startsWith(BASE) ? '/' + pathname.slice(BASE.length) : pathname;
+}
+
+/** Absolute launch-domain URL (canonical, OG, JSON-LD, sitemap), never includes the preview base. */
+export function abs(path: string): string {
+  return ORIGIN + '/' + path.replace(/^\/+/, '');
 }

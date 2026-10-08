@@ -1,0 +1,112 @@
+---
+import { u } from '../lib/paths';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { seo, business, govCapabilities, agenciesPursued, publicProjects, projectLocation, documentsLine, SHOW_CREDENTIALS, credentialsPendingVerification } from '../data/site';
+const documented = publicProjects.filter((p) => p.agencyApproved && p.agency);
+const bidMail = `mailto:${business.email}?subject=${encodeURIComponent('Bid invitation — BNZ Builders Inc.')}`;
+---
+<Base title={seo.gov.title} description={seo.gov.description}>
+  <PageHero
+    eyebrow="Government contracting"
+    title="Public works, built to the contract."
+    lead="BNZ Builders Inc. pursues public works and institutional renovation across New York State, with priority on New York City and Long Island."
+  >
+    <div class="btn-row">
+      <a class="btn btn--primary" href={bidMail}>Send a bid invitation <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="btn btn--ghost" href={u('/capability-statement/')}>Capability statement</a>
+    </div>
+  </PageHero>
+
+  <section class="section" aria-labelledby="cap-h">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Capabilities</p>
+        <h2 id="cap-h">What we bring to public owners.</h2>
+      </div>
+      <div class="grid grid--4">
+        {govCapabilities.map((c, i) => (
+          <div class="card reveal" style={`--i:${i}`}>
+            <span class="card-num">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark" aria-labelledby="comp-h">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="eyebrow eyebrow--light">Compliance awareness</p>
+        <h2 id="comp-h">Paperwork is part of the job.</h2>
+        <p class="lead">Public work comes with requirements that private work does not. We plan for them from the bid onward.</p>
+      </div>
+      <ul class="tick-list tick-list--light tick-list--big reveal">
+        <li><strong>Prevailing wage.</strong> Applicable wage and supplement schedules followed when the contract requires them.</li>
+        <li><strong>Certified payroll.</strong> Prepared and submitted on the schedule the owner specifies.</li>
+        <li><strong>Occupied facilities.</strong> Protection, sequencing and coordination with on-site staff in residences and active buildings.</li>
+        <li><strong>Submittals and closeout.</strong> Product data, punch lists and closeout documents organized for the owner’s file.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="documented" aria-labelledby="doc-h">
+    <div class="wrap">
+      <div class="section-head section-head--row reveal">
+        <div>
+          <p class="eyebrow">Documented work</p>
+          <h2 id="doc-h">Agency work on record.</h2>
+          <p class="section-sub">Only work BNZ Builders Inc. has documentation for is listed here. Statuses stay marked pending until verified.</p>
+        </div>
+        <a class="text-link" href={u('/projects/')}>All projects <span aria-hidden="true">→</span></a>
+      </div>
+      <ul class="doc-list">
+        {documented.map((p) => (
+          <li class="doc-item reveal">
+            <div>
+              <p class="meta">{p.agency}</p>
+              <h3><a href={u(`/projects/#${p.slug}`)}>{p.title}</a></h3>
+              <p class="doc-loc">{projectLocation(p)} · {p.trade}</p>
+            </div>
+            <StatusBadge project={p} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--paper" aria-labelledby="pursue-h">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Agencies and owners we pursue work with</p>
+        <h2 id="pursue-h">Where we pursue public work.</h2>
+        <p class="section-sub">These are owners whose construction opportunities we track and pursue. Inclusion here does not indicate a current contract, award or prequalification.</p>
+      </div>
+      <ul class="agency-grid">
+        {agenciesPursued.map((a, i) => (
+          <li class="agency reveal" style={`--i:${i}`}>
+            <span class="agency-short">{a.short}</span>
+            <span class="agency-name">{a.name}</span>
+          </li>
+        ))}
+        <li class="agency agency--cta reveal">
+          <span class="agency-short">Have a bid?</span>
+          <a class="agency-name" href={bidMail}>Send the package or plan-room link <span aria-hidden="true">→</span></a>
+        </li>
+      </ul>
+      {/* TODO(Bilal): confirm documentsLine is accurate before launch. */}
+      <p class="docs-line reveal">{documentsLine}</p>
+      {SHOW_CREDENTIALS && (
+        <dl class="cred-inline">
+          {credentialsPendingVerification.map((c) => <div><dt>{c.label}</dt><dd>{c.value}</dd></div>)}
+        </dl>
+      )}
+    </div>
+  </section>
+
+  <CtaBand heading="Bidding public work? Put us on the list." text="Send the bid package, plan-room link or invitation to bid. We will review scope, schedule and requirements and confirm fit." />
+</Base>

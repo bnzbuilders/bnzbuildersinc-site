@@ -33,7 +33,8 @@ const checkUrl = (from, raw, file) => {
   checked++;
   if (raw.includes('${')) return; // template strings inside inline JS
   if (raw.startsWith(SITE)) {
-    const served = new URL(raw).pathname;
+    // Launch-domain URLs (canonical, OG, JSON-LD, sitemap) never carry the preview base.
+    const served = BASE + new URL(raw).pathname.replace(/^\/+/, '');
     if (!resolveServed(served)) fail(`${from} → ${raw} (site URL has no file in dist / missing base ${BASE})`);
     return;
   }
@@ -70,9 +71,11 @@ for (const f of fs.existsSync(cssDir) ? fs.readdirSync(cssDir).filter((x) => x.e
   }
 }
 
-// sitemap + robots
-const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
-for (const m of sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)) checkUrl(`${BASE}sitemap.xml`, m[1], null);
+// sitemap (@astrojs/sitemap) + robots
+for (const sm of fs.readdirSync(root).filter((f) => /^sitemap.*\.xml$/.test(f))) {
+  const xml = fs.readFileSync(path.join(root, sm), 'utf8');
+  for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) checkUrl(`${BASE}${sm}`, m[1], null);
+}
 const robots = fs.readFileSync(path.join(root, 'robots.txt'), 'utf8');
 for (const m of robots.matchAll(/Sitemap:\s*(\S+)/g)) checkUrl(`${BASE}robots.txt`, m[1], null);
 

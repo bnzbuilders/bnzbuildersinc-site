@@ -1,0 +1,8 @@
+---
+import { u } from '../lib/paths';
+import { business } from '../data/site';
+---
+<a class="brand" href={u('/')} aria-label={`${business.legalName} — home`}>
+  <img src={u('/favicon.svg')} alt="" width="40" height="40" />
+  <span class="brand-word"><span class="brand-main">BNZ Builders</span><span class="brand-inc">Inc.</span></span>
+</a>

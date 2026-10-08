@@ -1,134 +1,133 @@
 ---
 import { u } from '../lib/paths';
 import Base from '../layouts/Base.astro';
-import PlanDrawing from '../components/PlanDrawing.astro';
+import HeroGraphic from '../components/HeroGraphic.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import CtaBand from '../components/CtaBand.astro';
-import CredList from '../components/CredList.astro';
-import { business, home, services, differentiators, publicWorks, credentials, serviceArea } from '../data/site';
-const ids = credentials.filter((c) => ['D-U-N-S', 'NYC DCWP', 'NYSDOL public work registration'].includes(c.label));
+import { business, seo, services, publicProjects, agenciesPursued, deliveryApproach, HERO_PHOTO, HERO_PHOTO_ALT } from '../data/site';
+const [core, ...rest] = services;
+const featured = publicProjects.filter((p) => p.featured);
 ---
-<Base title={home.seoTitle} description={home.seoDescription} localBusinessSchema>
-  <section class="hero">
-    <div class="wrap hero-grid">
+<Base title={seo.home.title} description={seo.home.description} localBusinessSchema>
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="hero-bg" aria-hidden={HERO_PHOTO ? undefined : 'true'}>
+      {HERO_PHOTO
+        ? <img class="hero-photo" src={u(HERO_PHOTO)} alt={HERO_PHOTO_ALT} fetchpriority="high" />
+        : <div class="hero-art"><HeroGraphic /></div>}
+    </div>
+    <div class="wrap hero-inner">
       <div class="hero-copy">
-        <p class="eyebrow">{business.credentialLine}</p>
-        <h1>Built right.<br />On time.<br /><span class="hl">On budget.</span></h1>
-        <p class="lead">{home.heroLead}</p>
-        <div class="btn-row">
-          <a class="btn btn--primary" href={u('/contact/')}>Request a Quote <span class="arrow" aria-hidden="true">→</span></a>
-          <a class="btn btn--ghost" href={u('/public-works/')}>Public agency? View credentials</a>
+        <p class="eyebrow eyebrow--light hero-anim" style="--d:0">BNZ Builders Inc.</p>
+        <p class="hero-line hero-anim" style="--d:1">Commercial Construction. Renovations. Public Works.</p>
+        <h1 id="hero-h" class="hero-anim" style="--d:2">Building with precision. <span>Delivering with purpose.</span></h1>
+        <p class="lead hero-anim" style="--d:3">{business.summary}</p>
+        <div class="btn-row hero-anim" style="--d:4">
+          <a class="btn btn--primary btn--lg" href={u('/contact/')}>Request a Quote <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost btn--lg" href={u('/projects/')}>View Our Projects</a>
         </div>
-      </div>
-      <div class="hero-art" aria-hidden="false">
-        <PlanDrawing />
       </div>
     </div>
     <div class="wrap">
-      <dl class="facts">
-        {home.facts.map((f) => (
-          <div class="fact"><dt>{f.label}</dt><dd>{f.value}</dd></div>
-        ))}
+      <dl class="hero-facts">
+        <div><dt>Headquarters</dt><dd>Cedarhurst, NY</dd></div>
+        <div><dt>Priority markets</dt><dd>NYC &amp; Long Island</dd></div>
+        <div><dt>Public works</dt><dd>Across New York State</dd></div>
+        <div><dt>Core trade</dt><dd>Professional painting</dd></div>
       </dl>
     </div>
   </section>
 
   <section class="section" aria-labelledby="svc-h">
     <div class="wrap">
-      <div class="section-head section-head--row">
+      <div class="section-head section-head--row reveal">
         <div>
           <p class="eyebrow">What we do</p>
-          <h2 id="svc-h">{home.servicesHeading}</h2>
+          <h2 id="svc-h">Renovation and finish work, delivered under one contract.</h2>
         </div>
-        <a class="text-link" href={u('/services/')}>All services &amp; scopes</a>
+        <a class="text-link" href={u('/services/')}>All services <span aria-hidden="true">→</span></a>
       </div>
-      <ol class="svc-list svc-list--cols">
-        {services.map((s, i) => (
-          <li class="svc-item">
-            <span class="svc-num">{String(i + 1).padStart(2, '0')}</span>
-            <div>
-              <h3>{s.title}</h3>
-              <p>{s.short}</p>
-            </div>
+
+      <a class="svc-feature reveal" href={u(`/services/#${core.slug}`)}>
+        <div class="svc-feature-main">
+          <span class="tag">Core trade</span>
+          <ServiceIcon name={core.icon} size={40} />
+          <h3>{core.title}</h3>
+          <p>{core.intro}</p>
+          <span class="text-link text-link--light">Painting services <span aria-hidden="true">→</span></span>
+        </div>
+        <ul class="svc-feature-list">
+          {core.items.map((i) => <li>{i}</li>)}
+        </ul>
+      </a>
+
+      <div class="svc-grid">
+        {rest.map((s, i) => (
+          <a class="svc-card reveal" href={u(`/services/#${s.slug}`)} style={`--i:${i}`}>
+            <span class="svc-num">{String(i + 2).padStart(2, '0')}</span>
+            <ServiceIcon name={s.icon} />
+            <h3>{s.title}</h3>
+            <p>{s.short}</p>
+            <span class="svc-more" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper" aria-labelledby="proj-h">
+    <div class="wrap">
+      <div class="section-head section-head--row reveal">
+        <div>
+          <p class="eyebrow">Documented work</p>
+          <h2 id="proj-h">Featured projects.</h2>
+          <p class="section-sub">Institutional renovation and painting work in New York. Statuses are shown as pending until verified; approved photos are added as they are cleared.</p>
+        </div>
+        <a class="text-link" href={u('/projects/')}>View our projects <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="grid grid--2">
+        {featured.map((p) => <ProjectCard project={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="gov-strip" aria-labelledby="gov-h">
+    <div class="wrap gov-strip-inner">
+      <div class="reveal">
+        <p class="eyebrow eyebrow--light">Government contracting</p>
+        <h2 id="gov-h">Public works and institutional construction across New York State.</h2>
+        <p class="lead">Renovations for agencies, authorities and institutional owners, run with the documentation, prevailing-wage awareness and occupied-building care that public work demands.</p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href={u('/government-contracting/')}>Government contracting <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div class="gov-pursue reveal">
+        <p class="gov-pursue-h">Agencies and owners we pursue work with</p>
+        <ul class="agency-chips">
+          {agenciesPursued.map((a) => <li title={a.name}>{a.short}</li>)}
+        </ul>
+        <p class="fine">Listing an agency here does not indicate a current contract or prequalification. See <a href={u('/government-contracting/#documented')}>documented work</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">How we work</p>
+        <h2 id="how-h">One point of contact, scope to closeout.</h2>
+      </div>
+      <ol class="steps">
+        {deliveryApproach.map((s, i) => (
+          <li class="step reveal" style={`--i:${i}`}>
+            <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
           </li>
         ))}
       </ol>
     </div>
   </section>
 
-  <section class="section section--dark" aria-labelledby="why-h">
-    <div class="wrap">
-      <div class="split">
-        <div>
-          <p class="eyebrow">How we work</p>
-          <h2 id="why-h">{business.aboutLine}</h2>
-          <p class="lead">One project manager, start to finish. Protection for buildings that stay in use. Paperwork done right on public work.</p>
-          <a class="btn btn--ghost" href={u('/about/')} style="margin-top:12px">About BNZ</a>
-        </div>
-        <div class="grid grid--2">
-          {differentiators.map((d) => (
-            <div class="card--line card">
-              <h3>{d.title}</h3>
-              <p>{d.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="pw-h">
-    <div class="wrap split split--even">
-      <div>
-        <p class="eyebrow">Public works</p>
-        <h2 id="pw-h">{publicWorks.heading}</h2>
-        <p class="lead">{publicWorks.lead}</p>
-        <ul class="check-list" style="margin:28px 0 32px">
-          {publicWorks.capabilities.map((c) => <li><strong>{c.title}.</strong> <span class="muted">{c.text}</span></li>)}
-        </ul>
-        <div class="btn-row">
-          <a class="btn btn--dark" href={u('/public-works/')}>Credentials</a>
-          <a class="btn btn--ghost" href={u('/capability-statement/')}>Capability statement</a>
-        </div>
-      </div>
-      <div class="cred-card">
-        <p class="dim">Facts on file</p>
-        <CredList label="Registrations" rows={[...ids, { label: 'Bonding', value: 'Available based on project requirements' }]} />
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--paper2" aria-labelledby="area-h">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Service area</p>
-        <h2 id="area-h">{serviceArea.heading}</h2>
-      </div>
-      <ul class="area-list">
-        {serviceArea.areas.map((a) => <li>{a}</li>)}
-      </ul>
-      <p class="muted" style="margin-top:28px;max-width:44em">{serviceArea.note} Based in {business.address.city}, {business.address.region}.</p>
-    </div>
-  </section>
-
   <CtaBand />
 </Base>
-
-<style>
-  .hero { padding: clamp(40px, 7vw, 96px) 0 0; position: relative; }
-  .hero-grid { display: grid; gap: 40px; align-items: center; padding-bottom: clamp(40px, 6vw, 72px); }
-  .hero h1 { font-size: clamp(3.6rem, 13vw, 8.5rem); line-height: 0.88; margin-bottom: 28px; }
-  .hero .hl { color: var(--orange); }
-  .hero .lead { margin-bottom: 32px; }
-  .hero-art { background: var(--black); padding: clamp(18px, 3vw, 32px); position: relative; }
-  .hero-art::before { content: ''; position: absolute; top: -10px; left: -10px; width: 64px; height: 64px; border-top: 4px solid var(--orange); border-left: 4px solid var(--orange); }
-  @media (min-width: 1000px) {
-    .hero-grid { grid-template-columns: 7fr 5fr; gap: 64px; }
-  }
-  .cred-card { background: var(--white); border: 1px solid var(--line); padding: clamp(24px, 4vw, 44px); border-top: 4px solid var(--orange); }
-  .cred-card .dim { margin-bottom: 10px; }
-  .area-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; border-top: 2px solid var(--ink); }
-  .area-list li { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.8rem, 4.5vw, 3rem); line-height: 1; padding: 18px 0; border-bottom: 1px solid var(--line-strong); display: flex; justify-content: space-between; align-items: center; }
-  .area-list li::after { content: 'NY'; font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; letter-spacing: .14em; color: var(--orange-text); }
-  @media (min-width: 720px) { .area-list { grid-template-columns: 1fr 1fr; column-gap: 48px; } }
-  @media (min-width: 1000px) { .area-list { grid-template-columns: repeat(3, 1fr); } }
-</style>

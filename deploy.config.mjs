@@ -1,23 +1,34 @@
 // ============================================================================
-//  WHERE THE SITE IS HOSTED. Change ONE line (TARGET) to switch.
+//  HOSTING CONFIG — canonical origin + base path
 // ============================================================================
-//  'github-pages'  → https://bnzbuilders.github.io/bnzbuildersinc-site/  (preview)
-//  'custom-domain' → https://bnzbuildersinc.com/                          (launch)
+//  PROD_ORIGIN is the launch domain. Astro `site`, canonical URLs, Open Graph
+//  URLs, JSON-LD and the sitemap ALWAYS use it, even in preview builds, so
+//  nothing needs to change in the templates at launch.
 //
-//  The DEPLOY_TARGET environment variable overrides it, if set.
-//  When switching to the custom domain, also add public/CNAME containing
-//  `bnzbuildersinc.com` and set the domain in the repo's Pages settings.
+//  BASE is the URL sub-path the build is served from:
+//    DEPLOY_TARGET=github-pages  (default) → '/bnzbuildersinc-site/'
+//        matches the existing preview at https://bnzbuilders.github.io/bnzbuildersinc-site/
+//        and the local preview at http://<host>:4321/bnzbuildersinc-site/
+//    DEPLOY_TARGET=custom-domain           → '/'   (use this for bnzbuilders.com)
+//    BASE_PATH=/anything/                  → overrides both (rarely needed)
+//
+//  The deploy workflow does not set DEPLOY_TARGET, so at launch change the
+//  default below to 'custom-domain' (and add public/CNAME). See HANDOFF-CLAUDE.md.
 // ============================================================================
+
+export const PROD_ORIGIN = 'https://bnzbuilders.com';
 
 export const TARGET = process.env.DEPLOY_TARGET || 'github-pages';
 
-const targets = {
-  'github-pages': { site: 'https://bnzbuilders.github.io', base: '/bnzbuildersinc-site/' },
-  'custom-domain': { site: 'https://bnzbuildersinc.com', base: '/' },
+const bases = {
+  'github-pages': '/bnzbuildersinc-site/',
+  'custom-domain': '/',
 };
 
-if (!targets[TARGET]) throw new Error(`Unknown DEPLOY_TARGET "${TARGET}"`);
+if (!bases[TARGET]) throw new Error(`Unknown DEPLOY_TARGET "${TARGET}"`);
 
-export const SITE = targets[TARGET].site;
+const rawBase = process.env.BASE_PATH || bases[TARGET];
+
+export const SITE = PROD_ORIGIN;
 /** Always starts and ends with "/". */
-export const BASE = targets[TARGET].base;
+export const BASE = ('/' + rawBase.replace(/^\/+|\/+$/g, '') + '/').replace(/\/+/g, '/');

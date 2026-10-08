@@ -1,19 +1,23 @@
 ---
 import { u } from '../lib/paths';
-import { business, home } from '../data/site';
+import { business } from '../data/site';
 interface Props { heading?: string; text?: string }
-const { heading = home.ctaHeading, text = home.ctaText } = Astro.props;
+const {
+  heading = 'Have a project in New York? Let’s talk.',
+  text = 'Send drawings, a scope sheet or a few details. We will review the project and come back with next steps.',
+} = Astro.props;
 ---
 <section class="cta-band" aria-labelledby="cta-h">
-  <div class="wrap">
+  <div class="wrap cta-inner reveal">
     <div>
+      <p class="eyebrow">Request a quote</p>
       <h2 id="cta-h">{heading}</h2>
     </div>
     <div>
-      <p>{text}</p>
-      <div class="btn-row" style="margin-top:24px">
+      <p class="cta-text">{text}</p>
+      <div class="btn-row">
         <a class="btn btn--dark" href={u('/contact/')}>Request a Quote <span class="arrow" aria-hidden="true">→</span></a>
-        <a class="btn btn--ghost" href={business.phoneHref}>Call {business.phoneDisplay}</a>
+        <a class="btn btn--outline-dark" href={business.phoneHref}>Call {business.phoneDisplay}</a>
       </div>
     </div>
   </div>

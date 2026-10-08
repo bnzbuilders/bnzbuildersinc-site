@@ -3,55 +3,67 @@ import { u } from '../lib/paths';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { projects, SHOW_DRAFT_PROJECTS } from '../data/site';
-const visible = projects.filter((p) => !p.needsVerification || SHOW_DRAFT_PROJECTS);
+import { seo, publicProjects, projectLocation } from '../data/site';
 ---
-<Base
-  title="Projects | BNZ Builders Inc."
-  description="Interior build-outs and renovations by the BNZ Builders team in New York. Project photos coming soon."
->
-  <PageHero eyebrow="Projects" title="Work and team experience." lead="Interior build-outs and renovations by the BNZ team. Photos are being added as projects are documented." />
+<Base title={seo.projects.title} description={seo.projects.description}>
+  <PageHero
+    eyebrow="Our projects"
+    title="Documented work."
+    lead="Renovation and painting work by BNZ Builders Inc. in New York. Each listing shows its verification status. Photos appear only after owner approval."
+  />
 
   <section class="section">
     <div class="wrap">
-      {visible.length > 0 ? (
-        <div class="grid grid--3 projects">
-          {visible.map((p) => (
-            <article class="project">
-              <PhotoSlot src={p.photo} alt={p.photoAlt} />
-              <div class="project-body">
-                {p.needsVerification && <p class="badge">DRAFT, pending approval</p>}
-                <p class="project-meta">{p.type} · {p.location} · {p.year}</p>
-                <h2>{p.client}</h2>
-                <p class="project-title">{p.title}</p>
-                <p class="muted project-scope">{p.scope}</p>
-                <p class="project-credit">{p.credit}</p>
+      <div class="notice reveal" role="note">
+        <strong>About these listings.</strong> Statuses are shown as reported and marked pending until verified. Exact addresses of occupied residences are not published. Placeholder frames mark where approved project photos will go.
+      </div>
+
+      <div class="project-list">
+        {publicProjects.map((p, idx) => (
+          <article id={p.slug} class="project-detail reveal" aria-labelledby={`${p.slug}-h`}>
+            <div class="project-detail-media">
+              <PhotoSlot src={p.photos[0]?.src} alt={p.photos[0]?.alt} ratio="16 / 10" />
+              <div class="project-thumbs">
+                {[1, 2, 3].map((n) => <PhotoSlot src={p.photos[n]?.src} alt={p.photos[n]?.alt} ratio="4 / 3" small label="Photo pending approval" />)}
               </div>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <div class="empty">
-          <h2>Project gallery coming soon.</h2>
-          <p class="lead">We are documenting completed work with photos and owner approval before it goes up here. Ask us about relevant experience.</p>
-          <a class="btn btn--dark" href={u('/contact/')}>Contact us</a>
-        </div>
-      )}
+            </div>
+            <div class="project-detail-body">
+              <p class="project-index">Project {String(idx + 1).padStart(2, '0')}</p>
+              <StatusBadge project={p} />
+              <h2 id={`${p.slug}-h`}>{p.title}</h2>
+              <dl class="project-facts">
+                {p.agencyApproved && p.agency && <div><dt>Agency / owner</dt><dd>{p.agency}</dd></div>}
+                <div><dt>Location</dt><dd>{projectLocation(p)}</dd></div>
+                <div><dt>Trade</dt><dd>{p.trade}</dd></div>
+              </dl>
+              <h3 class="mini-h">Scope</h3>
+              <ul class="tick-list">
+                {p.scope.map((s) => <li>{s}</li>)}
+              </ul>
+            </div>
+            {p.beforeAfter.length > 0 && (
+              <div class="project-detail-ba">
+                <div class="ba-intro">
+                  <h3 class="mini-h">Before / after</h3>
+                  <p>Drag the slider to compare. Approved before-and-after photos will appear here once they are cleared with the owner.</p>
+                </div>
+                {p.beforeAfter.map((ba, i) => <BeforeAfter id={`${p.slug}-${i}`} before={ba.before} after={ba.after} label={ba.label} />)}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <div class="more-projects reveal">
+        <h2>More projects are being documented.</h2>
+        <p>We add work here once photos and details are cleared with the owner. Ask us about relevant experience for your project.</p>
+        <a class="btn btn--dark" href={u('/contact/')}>Contact us <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
     </div>
   </section>
 
   <CtaBand />
 </Base>
-
-<style>
-  .project { background: var(--white); border: 1px solid var(--line); display: flex; flex-direction: column; }
-  .project-body { padding: 24px 24px 28px; display: flex; flex-direction: column; flex: 1; }
-  .project .badge { align-self: flex-start; margin-bottom: 16px; }
-  .project-meta { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange-text); margin-bottom: 10px; }
-  .project h2 { font-size: clamp(1.8rem, 3vw, 2.2rem); margin-bottom: 4px; }
-  .project-title { font-weight: 650; margin-bottom: 12px; }
-  .project-credit { margin: auto 0 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-2); }
-  .project-scope { margin-bottom: 20px; }
-  .empty { max-width: 40em; }
-</style>
